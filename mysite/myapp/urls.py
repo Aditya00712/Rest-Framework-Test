@@ -4,11 +4,9 @@ from .views import TaskViewSet
 
 app_name = 'myapp'
 
-# Create a router and register the TaskViewSet
 router = DefaultRouter()
 router.register(r'tasks', TaskViewSet, basename='task')
 
 urlpatterns = [
-    # Include the API routes
     path('api/', include(router.urls)),
 ]

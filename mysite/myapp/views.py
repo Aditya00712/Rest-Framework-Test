@@ -1,14 +1,20 @@
-from rest_framework import viewsets
+from rest_framework.exceptions import ValidationError
+from rest_framework import viewsets, filters, status
 from rest_framework.response import Response
-from rest_framework import status
-from .models import Task
 from .serializers import TaskSerializer
+from django.utils import timezone
+from .models import Task
+
 
 class TaskViewSet(viewsets.ModelViewSet):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['title',]
 
     def create(self, request):
+        self.validate_due_date(request.data.get('due_date'))
+
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -32,3 +38,9 @@ class TaskViewSet(viewsets.ModelViewSet):
         task = self.get_object()
         task.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def validate_due_date(self, due_date):
+        """Check that the due date is not in the past."""
+        if due_date:
+            if timezone.now().date() > timezone.datetime.strptime(due_date, '%Y-%m-%d').date():
+                raise ValidationError("Due date cannot be in the past.")
