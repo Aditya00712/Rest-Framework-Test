@@ -30,3 +30,23 @@
   
 ### 4. Delete a Task
 - **Endpoint**: `DELETE /api/tasks/{id}/`
+
+
+### 5 .Test the Search Functionality
+To search for tasks, you can now make a GET request with query parameters. Here’s how you can use it:
+Search by Title:
+GET /api/tasks/?search=your_task_title
+
+
+### 6.Testing the Validation
+To test this, you can try creating or updating a task with a due date set to a past date:
+Create a Task with Past Due Date:
+
+POST /api/tasks/
+Request Body:
+{
+  "title": "Sample Task",
+  "description": "This task has a past due date",
+  "due_date": "2022-01-01",         # Example of a past date
+  "status": false
+}
